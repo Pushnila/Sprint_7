@@ -1,8 +1,7 @@
 import allure
 import pytest
-import requests
 
-from urls import Urls
+from steps import create_courier
 
 
 @allure.feature('Создание курьера')
@@ -10,31 +9,17 @@ class TestCreateCourier:
 
     @allure.title('Курьера можно успешно создать')
     def test_create_courier_success(self, courier_data):
-        response = requests.post(
-            Urls.CREATE_COURIER,
-            json=courier_data
-        )
+        response = create_courier(courier_data)
 
         assert response.status_code == 201
         assert response.json() == {'ok': True}
 
     @allure.title('Нельзя создать двух одинаковых курьеров')
-    def test_create_duplicate_courier_returns_error(
-        self,
-        courier_data
-    ):
-        first_response = requests.post(
-            Urls.CREATE_COURIER,
-            json=courier_data
-        )
-        second_response = requests.post(
-            Urls.CREATE_COURIER,
-            json=courier_data
-        )
+    def test_create_duplicate_courier_returns_error(self, created_courier):
+        response = create_courier(created_courier)
 
-        assert first_response.status_code == 201
-        assert second_response.status_code == 409
-        assert second_response.json()['message'] == (
+        assert response.status_code == 409
+        assert response.json()['message'] == (
             'Этот логин уже используется. Попробуйте другой.'
         )
 
@@ -54,10 +39,7 @@ class TestCreateCourier:
         incomplete_data = courier_data.copy()
         incomplete_data.pop(field)
 
-        response = requests.post(
-            Urls.CREATE_COURIER,
-            json=incomplete_data
-        )
+        response = create_courier(incomplete_data)
 
         assert response.status_code == 400
         assert response.json()['message'] == (

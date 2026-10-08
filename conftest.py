@@ -1,8 +1,12 @@
 import pytest
-import requests
 
 from helpers import generate_courier_data
-from urls import Urls
+from steps import (
+    cancel_order,
+    create_courier,
+    delete_courier,
+    login_courier
+)
 
 
 @pytest.fixture
@@ -16,17 +20,20 @@ def courier_data():
         'password': data['password']
     }
 
-    login_response = requests.post(
-        Urls.LOGIN_COURIER,
-        json=login_payload
-    )
+    login_response = login_courier(login_payload)
 
     if login_response.status_code == 200:
         courier_id = login_response.json()['id']
+        delete_courier(courier_id)
 
-        requests.delete(
-            f'{Urls.CREATE_COURIER}/{courier_id}'
-        )
+
+@pytest.fixture
+def created_courier(courier_data):
+    response = create_courier(courier_data)
+
+    assert response.status_code == 201
+
+    return courier_data
 
 
 @pytest.fixture
@@ -36,7 +43,4 @@ def created_order_tracks():
     yield tracks
 
     for track in tracks:
-        requests.put(
-            Urls.CANCEL_ORDER,
-            params={'track': track}
-        )
+        cancel_order(track)
