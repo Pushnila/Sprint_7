@@ -29,10 +29,7 @@ def courier_data():
 
 @pytest.fixture
 def created_courier(courier_data):
-    response = create_courier(courier_data)
-
-    assert response.status_code == 201
-
+    create_courier(courier_data)
     return courier_data
 
 

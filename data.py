@@ -10,9 +10,17 @@ ORDER_DATA = {
 }
 
 
-ORDER_COLOR_CASES = [
-    ['BLACK'],
-    ['GREY'],
-    ['BLACK', 'GREY'],
-    None
+COURIER_ALREADY_EXISTS_MESSAGE = (
+    'Этот логин уже используется. Попробуйте другой.'
+)
+COURIER_REQUIRED_DATA_MESSAGE = (
+    'Недостаточно данных для создания учетной записи'
+)
+
+
+ORDER_CASES = [
+    {**ORDER_DATA, 'color': ['BLACK']},
+    {**ORDER_DATA, 'color': ['GREY']},
+    {**ORDER_DATA, 'color': ['BLACK', 'GREY']},
+    ORDER_DATA.copy()
 ]

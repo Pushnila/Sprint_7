@@ -1,6 +1,10 @@
 import allure
 import pytest
 
+from data import (
+    COURIER_ALREADY_EXISTS_MESSAGE,
+    COURIER_REQUIRED_DATA_MESSAGE
+)
 from steps import create_courier
 
 
@@ -19,9 +23,7 @@ class TestCreateCourier:
         response = create_courier(created_courier)
 
         assert response.status_code == 409
-        assert response.json()['message'] == (
-            'Этот логин уже используется. Попробуйте другой.'
-        )
+        assert response.json()['message'] == COURIER_ALREADY_EXISTS_MESSAGE
 
     @allure.title(
         'Без обязательного поля создание курьера невозможно: {field}'
@@ -42,6 +44,4 @@ class TestCreateCourier:
         response = create_courier(incomplete_data)
 
         assert response.status_code == 400
-        assert response.json()['message'] == (
-            'Недостаточно данных для создания учетной записи'
-        )
+        assert response.json()['message'] == COURIER_REQUIRED_DATA_MESSAGE
